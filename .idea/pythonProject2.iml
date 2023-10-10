@@ -5,3 +5,481 @@
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>
+
+#Importing necessary libraries
+import os
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+[28]
+# loading file in python environment
+df = pd.read_csv('files/HRDataset_v14.csv')
+[79]
+print(df.info())
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 311 entries, 0 to 310
+Data columns (total 35 columns):
+ #   Column                      Non-Null Count  Dtype  
+---  ------                      --------------  -----  
+ 0   Employee_Name               311 non-null    object 
+ 1   EmpID                       311 non-null    int64  
+ 2   MarriedID                   311 non-null    int64  
+ 3   MaritalStatusID             311 non-null    int64  
+ 4   GenderID                    311 non-null    int64  
+ 5   EmpStatusID                 311 non-null    int64  
+ 6   DeptID                      311 non-null    int64  
+ 7   PerfScoreID                 311 non-null    int64  
+ 8   FromDiversityJobFairID      311 non-null    int64  
+ 9   Salary                      311 non-null    int64  
+ 10  Termd                       311 non-null    int64  
+ 11  PositionID                  311 non-null    int64  
+ 12  Position                    311 non-null    object 
+ 13  State                       311 non-null    object 
+ 14  Zip                         311 non-null    int64  
+ 15  DOB                         311 non-null    object 
+ 16  Sex                         311 non-null    object 
+ 17  MaritalDesc                 311 non-null    object 
+ 18  CitizenDesc                 311 non-null    object 
+ 19  HispanicLatino              311 non-null    object 
+ 20  DateofHire                  311 non-null    object 
+ 21  DateofHire.1                311 non-null    object 
+ 22  TermReason                  311 non-null    object 
+ 23  EmploymentStatus            311 non-null    object 
+ 24  Department                  311 non-null    object 
+ 25  ManagerName                 311 non-null    object 
+ 26  ManagerID                   303 non-null    float64
+ 27  RecruitmentSource           311 non-null    object 
+ 28  PerformanceScore            311 non-null    object 
+ 29  EngagementSurvey            311 non-null    float64
+ 30  EmpSatisfaction             311 non-null    int64  
+ 31  SpecialProjectsCount        311 non-null    int64  
+ 32  LastPerformanceReview_Date  311 non-null    object 
+ 33  DaysLateLast30              311 non-null    int64  
+ 34  Absences                    311 non-null    int64  
+dtypes: float64(2), int64(16), object(17)
+memory usage: 85.2+ KB
+None
+
+[37]
+# Checking for missing values
+missing_values = df.isnull().sum()
+print(missing_values)
+
+Employee_Name                 0
+EmpID                         0
+MarriedID                     0
+MaritalStatusID               0
+GenderID                      0
+EmpStatusID                   0
+DeptID                        0
+PerfScoreID                   0
+FromDiversityJobFairID        0
+Salary                        0
+Termd                         0
+PositionID                    0
+Position                      0
+State                         0
+Zip                           0
+DOB                           0
+Sex                           0
+MaritalDesc                   0
+CitizenDesc                   0
+HispanicLatino                0
+DateofHire                    0
+DateofHire.1                  0
+TermReason                    0
+EmploymentStatus              0
+Department                    0
+ManagerName                   0
+ManagerID                     8
+RecruitmentSource             0
+PerformanceScore              0
+EngagementSurvey              0
+EmpSatisfaction               0
+SpecialProjectsCount          0
+LastPerformanceReview_Date    0
+DaysLateLast30                0
+Absences                      0
+dtype: int64
+
+[38]
+# Checking for duplicate rows
+duplicates = df.duplicated()
+print(duplicates.sum())
+
+0
+
+[60]
+# Data Cleaning: Remove leading/trailing whitespace from the 'Sex' column
+df['Sex'] = df['Sex'].str.strip()
+[29]
+# Displaing the first few rows
+print(df.head())
+              Employee_Name  EmpID  MarriedID  MaritalStatusID  GenderID  \
+0       Adinolfi, Wilson  K  10026          0                0         1   
+1  Ait Sidi, Karthikeyan     10084          1                1         1   
+2         Akinkuolie, Sarah  10196          1                1         0   
+3              Alagbe,Trina  10088          1                1         0   
+4          Anderson, Carol   10069          0                2         0   
+
+   EmpStatusID  DeptID  PerfScoreID  FromDiversityJobFairID  Salary  ...  \
+0            1       5            4                       0   62506  ...   
+1            5       3            3                       0  104437  ...   
+2            5       5            3                       0   64955  ...   
+3            1       5            3                       0   64991  ...   
+4            5       5            3                       0   50825  ...   
+
+      ManagerName  ManagerID RecruitmentSource PerformanceScore  \
+0  Michael Albert       22.0          LinkedIn          Exceeds   
+1      Simon Roup        4.0            Indeed      Fully Meets   
+2  Kissy Sullivan       20.0          LinkedIn      Fully Meets   
+3    Elijiah Gray       16.0            Indeed      Fully Meets   
+4  Webster Butler       39.0     Google Search      Fully Meets   
+
+   EngagementSurvey EmpSatisfaction SpecialProjectsCount  \
+0              4.60               5                    0   
+1              4.96               3                    6   
+2              3.02               3                    0   
+3              4.84               5                    0   
+4              5.00               4                    0   
+
+  LastPerformanceReview_Date DaysLateLast30 Absences  
+0                  1/17/2019              0        1  
+1                  2/24/2016              0       17  
+2                  5/15/2012              0        3  
+3                 01-03-2019              0       15  
+4                 02-01-2016              0        2  
+
+[5 rows x 35 columns]
+
+[32]
+# Display the first few rows of the dataset
+df.head()
+
+
+[52]
+# Descriptive statistics for all employee salaries
+all_salary_stats = df['Salary'].describe()
+print("Descriptive Statistics for All Employee Salaries:")
+print(all_salary_stats)
+
+Descriptive Statistics for All Employee Salaries:
+count       311.000000
+mean      69020.684887
+std       25156.636930
+min       45046.000000
+25%       55501.500000
+50%       62810.000000
+75%       72036.000000
+max      250000.000000
+Name: Salary, dtype: float64
+
+[61]
+# Descriptive statistics for male employee salaries
+male_salary_stats = df[df['Sex'] == 'M']['Salary'].describe()
+print("Descriptive Statistics for Male Employee Salaries:")
+print(male_salary_stats)
+Descriptive Statistics for Male Employee Salaries:
+count       135.000000
+mean      70629.400000
+std       24285.293173
+min       45115.000000
+25%       55650.000000
+50%       63353.000000
+75%       75655.000000
+max      178000.000000
+Name: Salary, dtype: float64
+
+[55]
+# Descriptive statistics for female employee salaries
+female_salary_stats = df[df['Sex'] == 'F']['Salary'].describe()
+print("Descriptive Statistics for Female Employee Salaries:")
+print(female_salary_stats)
+
+Descriptive Statistics for Female Employee Salaries:
+count       176.000000
+mean      67786.727273
+std       25805.669834
+min       45046.000000
+25%       55397.500000
+50%       62066.500000
+75%       68238.250000
+max      250000.000000
+Name: Salary, dtype: float64
+
+[68]
+# Descriptive statistics for all employee absences
+all_absence_stats = df['Absences'].describe()
+print("Descriptive Statistics for All Employee Absences:")
+print(all_absence_stats)
+
+Descriptive Statistics for All Employee Absences:
+count    311.000000
+mean      10.237942
+std        5.852596
+min        1.000000
+25%        5.000000
+50%       10.000000
+75%       15.000000
+max       20.000000
+Name: Absences, dtype: float64
+
+[69]
+# Descriptive statistics for male employee absences
+male_absences = df[df['Sex'] == 'M']['Absences']
+male_absence_stats = male_absences.describe()
+print("\nDescriptive Statistics for Male Employee Absences:")
+print(male_absence_stats)
+
+Descriptive Statistics for Male Employee Absences:
+count    135.000000
+mean      10.207407
+std        5.684617
+min        1.000000
+25%        5.000000
+50%       10.000000
+75%       15.000000
+max       20.000000
+Name: Absences, dtype: float64
+
+[70]
+# Descriptive statistics for female employee absences
+female_absences = df[df['Sex'] == 'F']['Absences']
+female_absence_stats = female_absences.describe()
+print("\nDescriptive Statistics for Female Employee Absences:")
+print(female_absence_stats)
+
+Descriptive Statistics for Female Employee Absences:
+count    176.000000
+mean      10.261364
+std        5.994272
+min        1.000000
+25%        5.000000
+50%       10.000000
+75%       16.000000
+max       20.000000
+Name: Absences, dtype: float64
+
+Data Visualization
+[34]
+# Bar chart of employees by department
+plt.figure(figsize=(10, 6))
+sns.countplot(x='Department', data=df)
+plt.title('Distribution of Employees by Department')
+plt.xticks(rotation=45)
+plt.show()
+
+
+[35]
+# Box plot of salaries by department
+plt.figure(figsize=(12, 6))
+sns.boxplot(x='Department', y='Salary', data=df)
+plt.title('Distribution of Salaries by Department')
+plt.xticks(rotation=45)
+plt.show()
+
+
+[36]
+# Pie chart of gender distribution
+gender_counts = df['Sex'].value_counts()
+plt.figure(figsize=(6, 6))
+plt.pie(gender_counts, labels=gender_counts.index, autopct='%1.1f%%', startangle=140)
+plt.title('Gender Distribution of Employees')
+plt.axis('equal')
+plt.show()
+
+
+[40]
+# Correlation heatmap
+correlation_matrix = df[['Salary', 'EngagementSurvey', 'EmpSatisfaction', 'SpecialProjectsCount']].corr()
+plt.figure(figsize=(8, 6))
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f")
+plt.title('Correlation Heatmap')
+plt.show()
+
+
+[49]
+# Creating a histogram for EmploymentStatus
+plt.figure(figsize=(8, 6))
+df['EmploymentStatus'].value_counts().plot(kind='bar', color='')
+plt.title('Employment Status Distribution')
+plt.xlabel('Employment Status')
+plt.ylabel('Count')
+plt.xticks(rotation=45)
+plt.show()
+
+[45]
+# Box plots of salary by gender
+plt.figure(figsize=(8, 6))
+sns.boxplot(x='Sex', y='Salary', data=df)
+plt.title('Salary Distribution by Gender')
+plt.show()
+
+
+[62]
+# Creating a bar graph for overall employee salary distribution
+plt.figure(figsize=(12, 6))
+plt.subplot(1, 2, 1)  # Create a subplot for overall salary distribution
+plt.hist(df['Salary'], bins=20, color='skyblue', edgecolor='black')
+plt.title('Overall Employee Salary Distribution')
+plt.xlabel('Salary')
+plt.ylabel('Count')
+Text(0, 0.5, 'Count')
+
+[67]
+# Separating male and female salaries
+male_salaries = df[df['Sex'] == 'M']['Salary']
+female_salaries = df[df['Sex'] == 'F']['Salary']
+
+# Create a figure with two subplots side by side
+plt.figure(figsize=(12, 6))
+
+# Plot male employee salary distribution
+plt.subplot(1, 2, 1)
+plt.hist(male_salaries, bins=20, color='red', alpha=0.7, label='Male', edgecolor='black')
+plt.title('Male Employee Salary Distribution')
+plt.xlabel('Salary')
+plt.ylabel('Count')
+plt.legend()
+
+# Plot female employee salary distribution
+plt.subplot(1, 2, 2)
+plt.hist(female_salaries, bins=20, color='pink', alpha=0.7, label='Female', edgecolor='black')
+plt.title('Female Employee Salary Distribution')
+plt.xlabel('Salary')
+plt.ylabel('Count')
+plt.legend()
+
+plt.tight_layout()  # Adjust subplot spacing
+plt.show()
+
+
+
+[72]
+# Creating a bar graph for all employee absences
+plt.figure(figsize=(12, 6))
+plt.subplot(1, 3, 1)
+plt.hist(df['Absences'], bins=20, color='skyblue', edgecolor='black')
+plt.title('All Employee Absences')
+plt.xlabel('Absences')
+plt.ylabel('Count')
+
+# Create a bar graph for male employee absences
+plt.subplot(1, 3, 2)
+plt.hist(df[df['Sex'] == 'M']['Absences'], bins=20, color='red', alpha=0.7, label='Male', edgecolor='black')
+plt.title('Male Employee Absences')
+plt.xlabel('Absences')
+plt.ylabel('Count')
+plt.legend()
+
+# Create a bar graph for female employee absences
+plt.subplot(1, 3, 3)
+plt.hist(df[df['Sex'] == 'F']['Absences'], bins=20, color='pink', alpha=0.7, label='Female', edgecolor='black')
+plt.title('Female Employee Absences')
+plt.xlabel('Absences')
+plt.ylabel('Count')
+plt.legend()
+
+plt.tight_layout()
+plt.show()
+
+[75]
+# Filter only numeric columns for the correlation matrix
+numeric_columns = df.select_dtypes(include=['number'])
+
+# Calculate the correlation matrix
+correlation_matrix = numeric_columns.corr()
+
+# Create a heatmap to visualize correlations
+plt.figure(figsize=(12, 10))
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', linewidths=0.5)
+plt.title('Correlation Heatmap')
+plt.show()
+
+[76]
+# Calculate performance statistics for all employees
+all_employees_perf = df.groupby('Sex')['PerformanceScore'].value_counts(normalize=True).unstack(fill_value=0)
+
+# Calculate performance statistics for female employees
+female_employees_perf = df[df['Sex'] == 'F']['PerformanceScore'].value_counts(normalize=True)
+
+# Calculate performance statistics for male employees
+male_employees_perf = df[df['Sex'] == 'M']['PerformanceScore'].value_counts(normalize=True)
+
+# Create tables to display performance statistics
+
+# Performance statistics for all employees
+print("Performance Statistics for All Employees:")
+print(all_employees_perf)
+
+# Performance statistics for female employees
+print("\nPerformance Statistics for Female Employees:")
+print(female_employees_perf)
+
+# Performance statistics for male employees
+print("\nPerformance Statistics for Male Employees:")
+print(male_employees_perf)
+Performance Statistics for All Employees:
+PerformanceScore   Exceeds  Fully Meets  Needs Improvement       PIP
+Sex                                                                 
+F                 0.113636     0.806818           0.051136  0.028409
+M                 0.125926     0.748148           0.066667  0.059259
+
+Performance Statistics for Female Employees:
+Fully Meets          0.806818
+Exceeds              0.113636
+Needs Improvement    0.051136
+PIP                  0.028409
+Name: PerformanceScore, dtype: float64
+
+Performance Statistics for Male Employees:
+Fully Meets          0.748148
+Exceeds              0.125926
+Needs Improvement    0.066667
+PIP                  0.059259
+Name: PerformanceScore, dtype: float64
+
+[77]
+# Create a pivot table to count employees by department and sex
+pivot_table = df.pivot_table(index=['Department', 'Sex'], values='Employee_Name', aggfunc='count')
+
+# Rename the column to 'Count'
+pivot_table.rename(columns={'Employee_Name': 'Count'}, inplace=True)
+
+# Reset the index to make the table more readable
+pivot_table.reset_index(inplace=True)
+
+# Display the pivot table
+print(pivot_table)
+              Department Sex  Count
+0          Admin Offices   F      6
+1          Admin Offices   M      3
+2       Executive Office   F      1
+3                  IT/IS   F     22
+4                  IT/IS   M     28
+5      Production          F    126
+6      Production          M     83
+7                  Sales   F     15
+8                  Sales   M     16
+9   Software Engineering   F      6
+10  Software Engineering   M      5
+
+[78]
+# Calculate performance statistics for each department
+department_perf = df.groupby(['Department', 'PerformanceScore'])['Employee_Name'].count().unstack(fill_value=0)
+
+# Create tables to display performance statistics for each department
+
+# Performance statistics for each department
+print("Performance Statistics (Counts) for Each Department:")
+print(department_perf)
+Performance Statistics (Counts) for Each Department:
+PerformanceScore      Exceeds  Fully Meets  Needs Improvement  PIP
+Department                                                        
+Admin Offices               0            9                  0    0
+Executive Office            0            1                  0    0
+IT/IS                       6           42                  1    1
+Production                 27          159                 15    8
+Sales                       2           24                  1    4
+Software Engineering        2            8                  1    0
+
